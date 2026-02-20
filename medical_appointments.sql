@@ -20,6 +20,8 @@ CREATE TABLE Users (
 
 CREATE TABLE Appointments (
     AppointmentId INT AUTO_INCREMENT PRIMARY KEY,
+    PatientId INT NOT NULL,
+    ProviderId INT NOT NULL,
     AppointmentDateTime DATETIME NOT NULL,
     DurationMinutes INT DEFAULT 30,
     ReasonForVisit VARCHAR(255),
@@ -30,7 +32,11 @@ CREATE TABLE Appointments (
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_appointment_datetime (AppointmentDateTime),
     INDEX idx_status (Status),
-    UNIQUE KEY unique_appointment_slot (ProviderId, AppointmentDateTime)
+    INDEX idx_patient_id (PatientId),
+    INDEX idx_provider_id (ProviderId),
+    UNIQUE KEY unique_appointment_slot (ProviderId, AppointmentDateTime),
+    FOREIGN KEY (PatientId) REFERENCES Users(UserId) ON DELETE CASCADE,
+    FOREIGN KEY (ProviderId) REFERENCES Users(UserId) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
