@@ -29,7 +29,8 @@ namespace HealthcareSchedulerAPI.Controllers
 
             var user = new User
             {
-                FullName = dto.FullName ?? "",
+                FirstName = dto.FirstName ?? "",
+                LastName = dto.LastName ?? "",
                 Email = dto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 Role = dto.Role ?? "Patient"
@@ -38,7 +39,7 @@ namespace HealthcareSchedulerAPI.Controllers
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
 
-            return Ok(new { user.Id, user.FullName, user.Email, user.Role });
+            return Ok(new { user.UserId, user.FirstName, user.LastName, user.Email, user.Role });
         }
 
         // POST: api/users/login
@@ -51,13 +52,14 @@ namespace HealthcareSchedulerAPI.Controllers
             var ok = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
             if (!ok) return Unauthorized("Invalid email or password.");
 
-            return Ok(new { user.Id, user.FullName, user.Email, user.Role });
+            return Ok(new { user.UserId, user.FirstName, user.LastName, user.Email, user.Role });
         }
     }
 
     public class UserRegisterDto
     {
-        public string? FullName { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public string Email { get; set; } = "";
         public string Password { get; set; } = "";
         public string? Role { get; set; } // Patient/Admin/etc.

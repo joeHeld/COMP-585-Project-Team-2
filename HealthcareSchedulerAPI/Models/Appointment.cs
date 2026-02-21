@@ -4,7 +4,7 @@ namespace HealthcareSchedulerAPI.Models
 {
     public class Appointment
     {
-        public int Id { get; set; }
+        public int AppointmentId { get; set; }
         public int PatientId { get; set; }
         public int ProviderId { get; set; }
         public DateTime AppointmentDateTime { get; set; }
