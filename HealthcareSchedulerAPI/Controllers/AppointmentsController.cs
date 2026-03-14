@@ -26,7 +26,7 @@ namespace HealthcareSchedulerAPI.Controllers
             if (request.AppointmentDateTime <= DateTime.UtcNow)
                 return BadRequest("Appointment must be in the future.");
 
-            // 🔥 Double booking prevention
+            //  Double booking prevention
             var conflict = await _db.Appointments.AnyAsync(a =>
                 a.ProviderId == request.ProviderId &&
                 a.AppointmentDateTime == request.AppointmentDateTime &&
