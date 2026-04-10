@@ -16,30 +16,51 @@ namespace HealthcareSchedulerAPI.Controllers
             _db = db;
         }
 
-        // POST: api/appointments
-        [HttpPost]
-        public async Task<IActionResult> Book([FromBody] Appointment request)
-        {
-            if (request.PatientId <= 0 || request.ProviderId <= 0)
-                return BadRequest("PatientId and ProviderId are required.");
+// POST: api/appointments
+[HttpPost]
+public async Task<IActionResult> Book([FromBody] Appointment request)
+{
+    if (request.PatientId <= 0 || request.ProviderId <= 0)
+        return BadRequest("PatientId and ProviderId are required.");
 
-            if (request.AppointmentDateTime <= DateTime.UtcNow)
-                return BadRequest("Appointment must be in the future.");
+    if (string.IsNullOrWhiteSpace(request.Reason))
+        return BadRequest("Reason is required.");
 
-            //  Double booking prevention
-            var conflict = await _db.Appointments.AnyAsync(a =>
-                a.ProviderId == request.ProviderId &&
-                a.AppointmentDateTime == request.AppointmentDateTime &&
-                a.Status == "Booked");
+    if (request.AppointmentDateTime <= DateTime.Now)
+        return BadRequest("Appointment must be in the future.");
 
-            if (conflict)
-                return Conflict("That time slot is already booked.");
+    var dayOfWeek = request.AppointmentDateTime.DayOfWeek;
+    if (dayOfWeek == DayOfWeek.Saturday || dayOfWeek == DayOfWeek.Sunday)
+        return BadRequest("The office is closed on weekends.");
 
-            _db.Appointments.Add(request);
-            await _db.SaveChangesAsync();
+    var hour = request.AppointmentDateTime.Hour;
+    if (hour < 9 || hour >= 17)
+        return BadRequest("Appointments must be booked during office hours.");
 
-            return Ok(request);
-        }
+    var providerConflict = await _db.Appointments.AnyAsync(a =>
+        a.ProviderId == request.ProviderId &&
+        a.AppointmentDateTime == request.AppointmentDateTime &&
+        a.Status != "Cancelled");
+
+    if (providerConflict)
+        return Conflict("That time slot is already booked for this provider.");
+
+    var patientConflict = await _db.Appointments.AnyAsync(a =>
+        a.PatientId == request.PatientId &&
+        a.AppointmentDateTime == request.AppointmentDateTime &&
+        a.Status != "Cancelled");
+
+    if (patientConflict)
+        return Conflict("You already have an appointment at that time.");
+
+    if (string.IsNullOrWhiteSpace(request.Status))
+        request.Status = "Booked";
+
+    _db.Appointments.Add(request);
+    await _db.SaveChangesAsync();
+
+    return Ok(request);
+}
 
         // GET: api/appointments/patient/1
         [HttpGet("patient/{patientId}")]

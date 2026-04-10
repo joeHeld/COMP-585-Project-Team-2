@@ -157,11 +157,17 @@ body {
     width: 230px;
     background: #ffffff;
     border-right: 1px solid #e5e7eb;
-    padding: 24px 16px;
+    padding: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     box-sizing: border-box;
+    min-height: 100vh;
+}
+
+.sidebar-brand-wrap {
+    padding: 22px 18px 18px;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .brand {
@@ -172,8 +178,8 @@ body {
 }
 
 .brand-sub {
-    margin-top: 4px;
-    margin-bottom: 30px;
+    margin-top: 6px;
+    margin-bottom: 0;
     color: #6b7280;
     font-size: 13px;
 }
@@ -181,15 +187,21 @@ body {
 .sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    padding: 12px 14px;
 }
 
 .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     text-decoration: none;
     color: #374151;
-    padding: 12px 14px;
-    border-radius: 10px;
+    padding: 14px 16px;
+    border-radius: 12px;
     font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
 }
 
 .sidebar-nav a.active,
@@ -198,21 +210,46 @@ body {
     color: #2563eb;
 }
 
-.sidebar-user {
-    padding-top: 20px;
+.nav-icon {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: currentColor;
 }
 
-.user-avatar {
-    width: 34px;
-    height: 34px;
+.nav-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.sidebar-user {
+    border-top: 1px solid #e5e7eb;
+    padding: 18px;
+}
+
+.sidebar-user-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.user-avatar-icon {
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    background: #eef2ff;
-    color: #2563eb;
+    background: #f3f4f6;
+    color: #4b5563;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 8px;
-    font-size: 14px;
+}
+
+.user-avatar-icon svg {
+    width: 24px;
+    height: 24px;
 }
 
 .user-name {
@@ -223,9 +260,8 @@ body {
 
 .user-role {
     color: #6b7280;
-    margin-top: 3px;
-    margin-bottom: 14px;
-    font-size: 13px;
+    margin-top: 2px;
+    font-size: 12px;
 }
 
 .logout-btn {
@@ -243,7 +279,7 @@ body {
 
 .dashboard-main {
     flex: 1;
-    padding: 28px 28px 36px 28px;
+    padding: 30px 42px 36px 42px;
     box-sizing: border-box;
 }
 
@@ -382,4 +418,229 @@ body {
     border-radius: 10px;
     cursor: pointer;
     font-size: 13px;
+}
+
+/*//////////////////////////////////////////////////////////////////////////////////////
+
+/* BOOK APPOINTMENT PAGE */
+.book-page-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding-top: 10px;
+}
+
+.book-title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: #111827;
+}
+
+.book-subtitle {
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.book-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px 24px 22px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.book-card .form-group {
+    margin-bottom: 18px;
+}
+
+.book-card .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.book-card input,
+.book-card select,
+.book-card textarea {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+    box-sizing: border-box;
+    background: #f9fafb;
+    color: #111827;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.book-card textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.book-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.book-confirm-btn {
+    flex: 1;
+}
+
+.book-cancel-btn {
+    padding: 13px 18px;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.book-cancel-btn:hover {
+    background: #f3f4f6;
+}
+
+/*//////////////////////////////////////////////
+/* BOOK APPOINTMENT PAGE  */
+.book-shell {
+    max-width: 700px;
+    margin: 0 auto;
+    padding-top: 14px;
+}
+
+.dashboard-main .book-heading {
+    text-align: left;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    color: #111827;
+    margin: 0 0 8px 0;
+}
+
+.dashboard-main .book-subheading {
+    text-align: left;
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0 0 28px 0;
+}
+
+.book-panel {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 26px 22px 24px 22px;
+    box-shadow: none;
+    border: 1px solid #eef2f7;
+}
+
+.book-field {
+    margin-bottom: 16px;
+}
+
+.book-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.book-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid #ececf1;
+    border-radius: 8px;
+    background: #f7f7fa;
+    color: #111827;
+    font-size: 13px;
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+select.book-input {
+    background-image:
+        linear-gradient(45deg, transparent 50%, #9ca3af 50%),
+        linear-gradient(135deg, #9ca3af 50%, transparent 50%);
+    background-position:
+        calc(100% - 18px) 17px,
+        calc(100% - 13px) 17px;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 34px;
+}
+
+.book-input::placeholder {
+    color: #9ca3af;
+}
+
+select.book-input {
+    height: 28px;
+    background-image:
+        linear-gradient(45deg, transparent 50%, #9ca3af 50%),
+        linear-gradient(135deg, #9ca3af 50%, transparent 50%);
+    background-position:
+        calc(100% - 16px) 11px,
+        calc(100% - 11px) 11px;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 28px;
+}
+
+.book-input:focus {
+    border-color: #d8def5;
+    background: #ffffff;
+}
+
+.book-textarea {
+    height: 92px;
+    padding: 10px 12px;
+    resize: none;
+    line-height: 1.4;
+}
+
+.book-button-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2px;
+}
+
+.book-primary-btn {
+    flex: 1;
+    height: 30px;
+    border: none;
+    border-radius: 8px;
+    background: #9fb4f7;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.book-primary-btn:hover {
+    background: #95acf5;
+}
+
+.book-secondary-btn {
+    height: 30px;
+    padding: 0 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.book-secondary-btn:hover {
+    background: #f3f4f6;
 }
