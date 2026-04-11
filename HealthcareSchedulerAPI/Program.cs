@@ -40,6 +40,8 @@ app.UseCors("Frontend");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
+app.UseStaticFiles();
+
 app.UseAuthorization();
 
 app.MapControllers();
