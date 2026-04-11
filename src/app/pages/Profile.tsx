@@ -3,15 +3,17 @@ import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { User, Mail, Phone, Calendar } from 'lucide-react';
 import { useState } from 'react';
+import { getCurrentUser, setCurrentUser } from '../lib/auth';
 
 export function Profile() {
+  const currentUser = getCurrentUser();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: 'John Doe',
-    email: 'john.doe@email.com',
-    phone: '(555) 123-4567',
-    dateOfBirth: '1990-01-15',
-    address: '123 Main St, City, State 12345',
+    fullName: currentUser?.fullName || '',
+    email: currentUser?.email || '',
+    phone: '',
+    dateOfBirth: '',
+    address: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,8 +24,10 @@ export function Profile() {
   };
 
   const handleSave = () => {
+    if (currentUser) {
+      setCurrentUser({ ...currentUser, fullName: formData.fullName, email: formData.email });
+    }
     setIsEditing(false);
-
   };
 
   return (
@@ -116,7 +120,7 @@ export function Profile() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               ) : (
-                <p className="text-gray-900 pl-6">{formData.phone}</p>
+                <p className="text-gray-900 pl-6">{formData.phone || 'Not provided'}</p>
               )}
             </div>
 
@@ -136,11 +140,13 @@ export function Profile() {
                 />
               ) : (
                 <p className="text-gray-900 pl-6">
-                  {new Date(formData.dateOfBirth).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
+                  {formData.dateOfBirth
+                    ? new Date(formData.dateOfBirth).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })
+                    : 'Not provided'}
                 </p>
               )}
             </div>
@@ -159,7 +165,7 @@ export function Profile() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               ) : (
-                <p className="text-gray-900 pl-6">{formData.address}</p>
+                <p className="text-gray-900 pl-6">{formData.address || 'Not provided'}</p>
               )}
             </div>
           </div>

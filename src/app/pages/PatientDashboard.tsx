@@ -1,72 +1,75 @@
+import { useEffect, useState } from 'react';
 import { Layout } from '../components/Layout';
 import { Card } from '../components/ui/card';
 import { Calendar, Clock, User, Activity } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useNavigate } from 'react-router';
+import { api } from '../lib/api';
+import { getCurrentUser } from '../lib/auth';
+
+type DashboardAppointment = {
+  id: number;
+  provider: string;
+  specialty: string;
+  date: string;
+  time: string;
+  status: string;
+};
 
 export function PatientDashboard() {
   const navigate = useNavigate();
+  const currentUser = getCurrentUser();
+  const [stats, setStats] = useState([
+    { title: 'Upcoming Appointments', value: '0', icon: Calendar, color: 'bg-blue-100 text-blue-600' },
+    { title: 'Past Appointments', value: '0', icon: Clock, color: 'bg-green-100 text-green-600' },
+    { title: 'Active Providers', value: '0', icon: User, color: 'bg-purple-100 text-purple-600' },
+    { title: 'Cancelled Appointments', value: '0', icon: Activity, color: 'bg-orange-100 text-orange-600' },
+  ]);
+  const [upcomingAppointments, setUpcomingAppointments] = useState<DashboardAppointment[]>([]);
 
-  const stats = [
-    {
-      title: 'Upcoming Appointments',
-      value: '3',
-      icon: Calendar,
-      color: 'bg-blue-100 text-blue-600',
-    },
-    {
-      title: 'Past Appointments',
-      value: '12',
-      icon: Clock,
-      color: 'bg-green-100 text-green-600',
-    },
-    {
-      title: 'Active Providers',
-      value: '5',
-      icon: User,
-      color: 'bg-purple-100 text-purple-600',
-    },
-    {
-      title: 'Health Records',
-      value: '8',
-      icon: Activity,
-      color: 'bg-orange-100 text-orange-600',
-    },
-  ];
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/login');
+      return;
+    }
 
-  const upcomingAppointments = [
-    {
-      id: 1,
-      provider: 'Dr. Sarah Johnson',
-      specialty: 'Cardiologist',
-      date: '2026-02-25',
-      time: '10:00 AM',
-      status: 'Confirmed',
-    },
-    {
-      id: 2,
-      provider: 'Dr. Michael Chen',
-      specialty: 'Dermatologist',
-      date: '2026-02-28',
-      time: '2:30 PM',
-      status: 'Confirmed',
-    },
-    {
-      id: 3,
-      provider: 'Dr. Emily Williams',
-      specialty: 'General Practice',
-      date: '2026-03-05',
-      time: '11:00 AM',
-      status: 'Pending',
-    },
-  ];
+    Promise.all([api.getPatientAppointments(currentUser.id), api.getProviders()]).then(([appointments, providers]) => {
+      const upcoming = appointments
+        .filter((appointment) => new Date(appointment.appointmentDateTime) >= new Date() && appointment.status !== 'Cancelled')
+        .sort((a, b) => new Date(a.appointmentDateTime).getTime() - new Date(b.appointmentDateTime).getTime());
+
+      setStats([
+        { title: 'Upcoming Appointments', value: String(upcoming.length), icon: Calendar, color: 'bg-blue-100 text-blue-600' },
+        { title: 'Past Appointments', value: String(Math.max(appointments.length - upcoming.length, 0)), icon: Clock, color: 'bg-green-100 text-green-600' },
+        { title: 'Active Providers', value: String(providers.length), icon: User, color: 'bg-purple-100 text-purple-600' },
+        { title: 'Cancelled Appointments', value: String(appointments.filter((appointment) => appointment.status === 'Cancelled').length), icon: Activity, color: 'bg-orange-100 text-orange-600' },
+      ]);
+
+      setUpcomingAppointments(
+        upcoming.slice(0, 3).map((appointment) => {
+          const provider = providers.find((item) => item.id === appointment.providerId);
+          const when = new Date(appointment.appointmentDateTime);
+          return {
+            id: appointment.id,
+            provider: provider?.fullName || `Provider #${appointment.providerId}`,
+            specialty: provider?.specialty || 'General Care',
+            date: when.toLocaleDateString(),
+            time: when.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
+            status: appointment.status,
+          };
+        })
+      );
+    }).catch(() => {
+      setUpcomingAppointments([]);
+    });
+  }, [currentUser, navigate]);
 
   return (
     <Layout userType="patient">
       <div className="p-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, John!</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {currentUser?.fullName?.split(' ')[0] || 'Patient'}!</h1>
           <p className="text-gray-600">Here's an overview of your health appointments</p>
         </div>
 
@@ -98,9 +101,9 @@ export function PatientDashboard() {
               <Calendar className="w-4 h-4 mr-2" />
               Book New Appointment
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => navigate('/my-appointments')}>
               <Activity className="w-4 h-4 mr-2" />
-              View Health Records
+              View My Appointments
             </Button>
           </div>
         </div>
@@ -132,20 +135,23 @@ export function PatientDashboard() {
                     <div className="flex items-center gap-3">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          appointment.status === 'Confirmed'
+                          appointment.status === 'Confirmed' || appointment.status === 'Booked'
                             ? 'bg-green-100 text-green-700'
                             : 'bg-yellow-100 text-yellow-700'
                         }`}
                       >
                         {appointment.status}
                       </span>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => navigate('/my-appointments')}>
                         View Details
                       </Button>
                     </div>
                   </div>
                 </div>
               ))}
+              {upcomingAppointments.length === 0 && (
+                <div className="p-6 text-gray-600">No upcoming appointments found.</div>
+              )}
             </div>
           </Card>
         </div>

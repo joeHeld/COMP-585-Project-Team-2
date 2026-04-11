@@ -1,13 +1,14 @@
 import { ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
-import { 
-  Calendar, 
-  Home, 
-  Users, 
-  ClipboardList, 
+import {
+  Calendar,
+  Home,
+  Users,
+  ClipboardList,
   LogOut,
   UserCircle
 } from 'lucide-react';
+import { clearCurrentUser, getCurrentUser } from '../lib/auth';
 
 interface LayoutProps {
   children: ReactNode;
@@ -17,6 +18,7 @@ interface LayoutProps {
 export function Layout({ children, userType = 'patient' }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const currentUser = getCurrentUser();
 
   const patientNavItems = [
     { path: '/dashboard', icon: Home, label: 'Dashboard' },
@@ -32,6 +34,7 @@ export function Layout({ children, userType = 'patient' }: LayoutProps) {
   const navItems = userType === 'admin' ? adminNavItems : patientNavItems;
 
   const handleLogout = () => {
+    clearCurrentUser();
     navigate('/login');
   };
 
@@ -72,10 +75,10 @@ export function Layout({ children, userType = 'patient' }: LayoutProps) {
             <UserCircle className="w-8 h-8 text-gray-600" />
             <div>
               <p className="text-sm font-medium text-gray-900">
-                {userType === 'admin' ? 'Admin User' : 'John Doe'}
+                {currentUser?.fullName || (userType === 'admin' ? 'Admin' : 'Patient')}
               </p>
               <p className="text-xs text-gray-500">
-                {userType === 'admin' ? 'Administrator' : 'Patient'}
+                {currentUser?.role || (userType === 'admin' ? 'Administrator' : 'Patient')}
               </p>
             </div>
           </div>
