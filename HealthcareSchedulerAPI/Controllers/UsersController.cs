@@ -27,6 +27,8 @@ namespace HealthcareSchedulerAPI.Controllers
             var exists = await _db.Users.AnyAsync(u => u.Email == dto.Email);
             if (exists) return BadRequest("Email already exists.");
 
+            if (dto.Password != dto.ConfirmPassword) return BadRequest("Passwords do not match.");
+
             var user = new User
             {
                 FullName = dto.FullName ?? "",
@@ -60,6 +62,7 @@ namespace HealthcareSchedulerAPI.Controllers
         public string? FullName { get; set; }
         public string Email { get; set; } = "";
         public string Password { get; set; } = "";
+        public string ConfirmPassword { get; set; } = "";
         public string? Role { get; set; } // Patient/Admin/etc.
     }
 

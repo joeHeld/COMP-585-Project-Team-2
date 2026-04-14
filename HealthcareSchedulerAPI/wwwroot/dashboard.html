@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="dashboard-page">
+
+<div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+        <div>
+            <h2 class="brand">HealthCare</h2>
+            <p class="brand-sub">Appointment System</p>
+
+            <nav class="sidebar-nav">
+                <a class="active" href="/dashboard.html">Dashboard</a>
+                <a href="/book-appointment.html">Book Appointment</a>
+                <a href="/my-appointments.html">My Appointments</a>
+            </nav>
+        </div>
+
+        <div class="sidebar-user">
+            <div class="user-avatar">◉</div>
+            <div class="user-name" id="userName"></div>
+            <div class="user-role">Patient</div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </aside>
+
+    <main class="dashboard-main">
+        <h1 id="welcomeText">Welcome back!</h1>
+        <p class="dashboard-subtitle">Here's an overview of your health appointments</p>
+
+        <section class="stats-row">
+            <div class="stat-box">
+                <div class="stat-label">Upcoming Appointments</div>
+                <div class="stat-number">3</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-label">Past Appointments</div>
+                <div class="stat-number">12</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-label">Active Providers</div>
+                <div class="stat-number">5</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-label">Health Records</div>
+                <div class="stat-number">8</div>
+            </div>
+        </section>
+
+        <section class="quick-actions">
+            <h2>Quick Actions</h2>
+            <div class="quick-buttons">
+                <a class="primary-action" href="/book-appointment.html">Book New Appointment</a>
+                <button class="secondary-action" type="button">View Health Records</button>
+            </div>
+        </section>
+
+        <section class="appointments-panel">
+            <h2>Upcoming Appointments</h2>
+
+            <div class="appointment-row">
+                <div>
+                    <div class="doctor-name">Dr. Sarah Johnson</div>
+                    <div class="doctor-meta">Cardiologist</div>
+                    <div class="doctor-meta">2026-02-25 • 10:00 AM</div>
+                </div>
+                <div class="appointment-actions">
+                    <span class="status confirmed">Confirmed</span>
+                    <button class="details-btn">View Details</button>
+                </div>
+            </div>
+
+            <div class="appointment-row">
+                <div>
+                    <div class="doctor-name">Dr. Michael Chen</div>
+                    <div class="doctor-meta">Dermatologist</div>
+                    <div class="doctor-meta">2026-02-28 • 2:30 PM</div>
+                </div>
+                <div class="appointment-actions">
+                    <span class="status confirmed">Confirmed</span>
+                    <button class="details-btn">View Details</button>
+                </div>
+            </div>
+
+            <div class="appointment-row">
+                <div>
+                    <div class="doctor-name">Dr. Emily Williams</div>
+                    <div class="doctor-meta">General Practice</div>
+                    <div class="doctor-meta">2026-03-05 • 11:00 AM</div>
+                </div>
+                <div class="appointment-actions">
+                    <span class="status pending">Pending</span>
+                    <button class="details-btn">View Details</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
+    window.location.href = "/login.html";
+} else {
+    document.getElementById("userName").innerText = user.fullName;
+    document.getElementById("welcomeText").innerText = "Welcome back, " + user.fullName + "!";
+}
+
+function logout() {
+    localStorage.removeItem("user");
+    window.location.href = "/login.html";
+}
+</script>
+
+</body>
+</html>
