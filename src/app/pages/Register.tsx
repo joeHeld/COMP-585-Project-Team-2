@@ -36,7 +36,7 @@ export function Register() {
 
     setIsSubmitting(true);
     try {
-      const user = await api.register(formData.fullName, formData.email, formData.password);
+      const user = await api.register(formData.fullName, formData.email, formData.password, formData.phone, formData.dateOfBirth);
       setCurrentUser(user);
       toast.success('Account created successfully');
       navigate('/dashboard');

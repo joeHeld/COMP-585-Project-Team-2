@@ -3,6 +3,8 @@ id: number;
 fullName: string;
 email: string;
 role: string;
+phone: string;
+dateOfBirth: string;
 }
 
 export interface Provider {
@@ -43,10 +45,16 @@ request<AppUser>("/api/users/login", {
 method: "POST",
 body: JSON.stringify({ email, password }),
 }),
-register: (fullName: string, email: string, password: string) =>
+register: (fullName: string, email: string, password: string, phone?: string, dateOfBirth?: string) =>
 request<AppUser>("/api/users/register", {
 method: "POST",
-body: JSON.stringify({ fullName, email, password, role: "Patient" }),
+body: JSON.stringify({ fullName, email, password, role: "Patient", phone, dateOfBirth }),
+}),
+getUserById: (id: number) => request<AppUser>("/api/users/" + id),
+updateUser: (id: number, payload: { fullName: string; email: string; phone?: string; dateOfBirth?: string }) =>
+request<AppUser>("/api/users/" + id, {
+method: "PUT",
+body: JSON.stringify(payload),
 }),
 getProviders: () => request<Provider[]>("/api/providers"),
 

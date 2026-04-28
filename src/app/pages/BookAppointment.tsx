@@ -14,7 +14,7 @@ import {
 } from '../components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Calendar as CalendarIcon, Check } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
@@ -72,12 +72,13 @@ export function BookAppointment() {
 
     const appointmentDateTime = new Date(date);
     appointmentDateTime.setHours(hours, minutes, 0, 0);
+    const localDateTime = format(appointmentDateTime, "yyyy-MM-dd'T'HH:mm:ss");
 
     try {
       await api.bookAppointment({
         patientId: user.id,
         providerId: Number(provider),
-        appointmentDateTime: appointmentDateTime.toISOString(),
+        appointmentDateTime: localDateTime,
         reason,
       });
 
@@ -137,7 +138,7 @@ export function BookAppointment() {
                       mode="single"
                       selected={date}
                       onSelect={setDate}
-                      disabled={(date) => date < new Date()}
+                      disabled={(calendarDate) => startOfDay(calendarDate) < startOfDay(new Date())}
                       initialFocus
                     />
                   </PopoverContent>

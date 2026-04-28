@@ -26,16 +26,22 @@ public async Task<IActionResult> Book([FromBody] Appointment request)
     if (string.IsNullOrWhiteSpace(request.Reason))
         return BadRequest("Reason is required.");
 
-    if (request.AppointmentDateTime <= DateTime.Now)
+    var appointmentDateTime = request.AppointmentDateTime.Kind == DateTimeKind.Utc
+        ? request.AppointmentDateTime.ToLocalTime()
+        : request.AppointmentDateTime;
+
+    if (appointmentDateTime <= DateTime.Now)
         return BadRequest("Appointment must be in the future.");
 
-    var dayOfWeek = request.AppointmentDateTime.DayOfWeek;
+    var dayOfWeek = appointmentDateTime.DayOfWeek;
     if (dayOfWeek == DayOfWeek.Saturday || dayOfWeek == DayOfWeek.Sunday)
         return BadRequest("The office is closed on weekends.");
 
-    var hour = request.AppointmentDateTime.Hour;
+    var hour = appointmentDateTime.Hour;
     if (hour < 9 || hour >= 17)
         return BadRequest("Appointments must be booked during office hours.");
+
+    request.AppointmentDateTime = appointmentDateTime;
 
     var providerConflict = await _db.Appointments.AnyAsync(a =>
         a.ProviderId == request.ProviderId &&

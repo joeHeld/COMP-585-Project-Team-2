@@ -71,7 +71,10 @@ export function Layout({ children, userType = 'patient' }: LayoutProps) {
         </nav>
 
         <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center gap-3 px-4 py-3 mb-2">
+          <Link
+            to="/profile"
+            className="flex items-center gap-3 px-4 py-3 mb-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
             <UserCircle className="w-8 h-8 text-gray-600" />
             <div>
               <p className="text-sm font-medium text-gray-900">
@@ -81,7 +84,7 @@ export function Layout({ children, userType = 'patient' }: LayoutProps) {
                 {currentUser?.role || (userType === 'admin' ? 'Administrator' : 'Patient')}
               </p>
             </div>
-          </div>
+          </Link>
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 w-full transition-colors"
