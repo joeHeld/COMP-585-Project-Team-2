@@ -29,6 +29,13 @@ namespace HealthcareSchedulerAPI.Controllers
 
             if (dto.Password != dto.ConfirmPassword) return BadRequest("Passwords do not match.");
 
+            
+            if (string.IsNullOrWhiteSpace(dto.PhoneNumber))
+                return BadRequest("Phone number is required.");
+
+            if (dto.DateOfBirth == default)
+                return BadRequest("Date of birth is required.");
+
             var user = new User
             {
                 FullName = dto.FullName ?? "",
@@ -64,6 +71,8 @@ namespace HealthcareSchedulerAPI.Controllers
         public string Password { get; set; } = "";
         public string ConfirmPassword { get; set; } = "";
         public string? Role { get; set; } // Patient/Admin/etc.
+        public string PhoneNumber { get; set; } = "";
+        public DateTime DateOfBirth { get; set; }
     }
 
     public class UserLoginDto
