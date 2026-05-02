@@ -3,3 +3,4 @@
 *.db
 .vscode/
 .DS_Store
+*.zip
