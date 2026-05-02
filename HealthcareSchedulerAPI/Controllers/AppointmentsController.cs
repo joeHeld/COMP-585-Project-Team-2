@@ -63,15 +63,32 @@ public async Task<IActionResult> Book([FromBody] Appointment request)
 }
 
         // GET: api/appointments/patient/1
-        [HttpGet("patient/{patientId}")]
-        public async Task<IActionResult> GetForPatient(int patientId)
-        {
-            var list = await _db.Appointments
-                .Where(a => a.PatientId == patientId)
-                .ToListAsync();
+// GET: api/appointments/patient/1
+[HttpGet("patient/{patientId}")]
+public async Task<IActionResult> GetForPatient(int patientId)
+{
+    var list = await _db.Appointments
+        .Where(a => a.PatientId == patientId)
+        .Join(
+            _db.Providers,
+            appointment => appointment.ProviderId,
+            provider => provider.Id,
+            (appointment, provider) => new
+            {
+                appointment.Id,
+                appointment.PatientId,
+                appointment.ProviderId,
+                appointment.AppointmentDateTime,
+                appointment.Reason,
+                appointment.Status,
+                providerName = provider.FullName,
+                providerSpecialty = provider.Specialty
+            }
+        )
+        .ToListAsync();
 
-            return Ok(list);
-        }
+    return Ok(list);
+}
 
         // POST: api/appointments/cancel/5
         [HttpPost("cancel/{id}")]
