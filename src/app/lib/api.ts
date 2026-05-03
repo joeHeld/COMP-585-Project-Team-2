@@ -76,5 +76,15 @@ method: "POST",
 body: JSON.stringify({ ...payload, status: "Booked" }),
 }),
 cancelAppointment: (id: number) =>
-request<Appointment>("/api/appointments/cancel/" + id, { method: "POST" }),
+  request<Appointment>("/api/appointments/cancel/" + id, { method: "POST" }),
+forgotPassword: (email: string, fullName: string, dateOfBirth: string) =>
+  request<{ token: string }>("/api/users/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email, fullName, dateOfBirth }),
+  }),
+resetPassword: (token: string, newPassword: string) =>
+  request<{ message: string }>("/api/users/reset-password", {
+    method: "POST",
+    body: JSON.stringify({ token, newPassword }),
+  }),
 };

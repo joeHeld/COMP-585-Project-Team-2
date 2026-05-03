@@ -9,5 +9,7 @@ namespace HealthcareSchedulerAPI.Models
         public string Role { get; set; } = "Patient"; // Patient or Admin
         public string Phone { get; set; } = "";
         public string DateOfBirth { get; set; } = "";
+        public string? PasswordResetToken { get; set; }
+        public DateTime? PasswordResetTokenExpiry { get; set; }
     }
 }

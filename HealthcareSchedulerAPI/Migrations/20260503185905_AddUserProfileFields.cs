@@ -1,3 +1,4 @@
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -11,14 +12,26 @@ namespace HealthcareSchedulerAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Phone",
+                name: "DateOfBirth",
                 table: "Users",
                 type: "TEXT",
                 nullable: false,
                 defaultValue: "");
 
             migrationBuilder.AddColumn<string>(
-                name: "DateOfBirth",
+                name: "PasswordResetToken",
+                table: "Users",
+                type: "TEXT",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "PasswordResetTokenExpiry",
+                table: "Users",
+                type: "TEXT",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Phone",
                 table: "Users",
                 type: "TEXT",
                 nullable: false,
@@ -29,11 +42,19 @@ namespace HealthcareSchedulerAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Phone",
+                name: "DateOfBirth",
                 table: "Users");
 
             migrationBuilder.DropColumn(
-                name: "DateOfBirth",
+                name: "PasswordResetToken",
+                table: "Users");
+
+            migrationBuilder.DropColumn(
+                name: "PasswordResetTokenExpiry",
+                table: "Users");
+
+            migrationBuilder.DropColumn(
+                name: "Phone",
                 table: "Users");
         }
     }
