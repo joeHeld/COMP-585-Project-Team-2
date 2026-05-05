@@ -207,7 +207,7 @@ export function Profile() {
               ) : (
                 <p className="text-gray-900 pl-6">
                   {formData.dateOfBirth
-                    ? new Date(formData.dateOfBirth).toLocaleDateString('en-US', {
+                    ? new Date(formData.dateOfBirth + 'T00:00:00').toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',

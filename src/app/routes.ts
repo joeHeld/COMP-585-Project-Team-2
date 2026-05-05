@@ -4,6 +4,8 @@ import { Register } from './pages/Register';
 import { PatientDashboard } from './pages/PatientDashboard';
 import { BookAppointment } from './pages/BookAppointment';
 import { MyAppointments } from './pages/MyAppointments';
+import { RescheduleAppointment } from './pages/RescheduleAppointment';
+import { HealthRecords } from './pages/HealthRecords';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { Profile } from './pages/Profile';
 import { ForgotPassword } from './pages/ForgotPassword';
@@ -41,6 +43,14 @@ export const router = createBrowserRouter([
   {
     path: '/my-appointments',
     Component: MyAppointments,
+  },
+  {
+    path: '/appointments/:id/reschedule',
+    Component: RescheduleAppointment,
+  },
+  {
+    path: '/health-records',
+    Component: HealthRecords,
   },
   {
     path: '/admin',

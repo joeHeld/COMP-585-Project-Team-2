@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Layout } from '../components/Layout';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -12,7 +12,7 @@ import {
   TableRow,
 } from '../components/ui/table';
 import { Badge } from '../components/ui/badge';
-import { Calendar, Clock, User, MoreVertical, X, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, User, MoreVertical, X, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import {
 
   DropdownMenu,
@@ -29,6 +29,7 @@ import { getCurrentUser } from '../lib/auth';
 export function MyAppointments() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [providers, setProviders] = useState<Provider[]>([]);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [appointmentToCancel, setAppointmentToCancel] = useState<number | null>(null);
@@ -90,7 +91,7 @@ export function MyAppointments() {
   };
 
   const handleReschedule = (id: number) => {
-    toast.info('Rescheduling feature coming soon');
+    navigate(`/appointments/${id}/reschedule`);
   };
 
   const getStatusBadge = (status: string) => {
@@ -157,7 +158,8 @@ export function MyAppointments() {
                   </TableHeader>
                   <TableBody>
                     {upcomingAppointments.map((appointment) => (
-                      <TableRow key={appointment.id}>
+                      <React.Fragment key={appointment.id}>
+                      <TableRow>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <User className="w-4 h-4 text-gray-400" />
@@ -181,19 +183,6 @@ export function MyAppointments() {
                         <TableCell>{getStatusBadge(appointment.status)}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => openCancelModal(appointment.id)}
-                              disabled={appointment.status !== 'Booked'}
-                              className={`h-8 px-3 text-xs ${
-                                appointment.status !== 'Booked'
-                                  ? 'opacity-50 text-gray-400 border-gray-200 cursor-default hover:bg-transparent hover:text-gray-400'
-                                  : 'text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700'
-                              }`}
-                            >
-                              Cancel
-                            </Button>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="sm">
@@ -201,9 +190,10 @@ export function MyAppointments() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => toast.info('View details')}>
-                                  <CheckCircle className="w-4 h-4 mr-2" />
-                                  View Details
+                                <DropdownMenuItem onClick={() => setExpandedId(expandedId === appointment.id ? null : appointment.id)}>
+                                  {expandedId === appointment.id
+                                    ? <><ChevronUp className="w-4 h-4 mr-2" />Hide Details</>
+                                    : <><ChevronDown className="w-4 h-4 mr-2" />View Details</>}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleReschedule(appointment.id)}>
                                   <Calendar className="w-4 h-4 mr-2" />
@@ -222,6 +212,18 @@ export function MyAppointments() {
                           </div>
                         </TableCell>
                       </TableRow>
+                      {expandedId === appointment.id && (
+                        <TableRow className="bg-gray-50">
+                          <TableCell colSpan={6} className="py-3 px-6 text-sm text-gray-700">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                              <div><span className="text-gray-500">Reference ID: </span><span className="font-medium">APT-{appointment.id.toString().padStart(5, '0')}</span></div>
+                              <div><span className="text-gray-500">Days Until: </span><span className="font-medium">{Math.ceil((new Date(appointment.appointmentDateTime).getTime() - Date.now()) / 86400000)} days</span></div>
+                              <div><span className="text-gray-500">Duration: </span><span className="font-medium">30 minutes</span></div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      </React.Fragment>
                     ))}
                   </TableBody>
                 </Table>
@@ -240,11 +242,13 @@ export function MyAppointments() {
                     <TableHead>Date & Time</TableHead>
                     <TableHead>Reason</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {pastAppointments.map((appointment) => (
-                    <TableRow key={appointment.id}>
+                    <React.Fragment key={appointment.id}>
+                    <TableRow>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <User className="w-4 h-4 text-gray-400" />
@@ -266,7 +270,24 @@ export function MyAppointments() {
                       </TableCell>
                       <TableCell className="text-gray-600">{appointment.reason}</TableCell>
                       <TableCell>{getStatusBadge(appointment.status)}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm" onClick={() => setExpandedId(expandedId === appointment.id ? null : appointment.id)}>
+                          {expandedId === appointment.id ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        </Button>
+                      </TableCell>
                     </TableRow>
+                    {expandedId === appointment.id && (
+                      <TableRow className="bg-gray-50">
+                        <TableCell colSpan={6} className="py-3 px-6 text-sm text-gray-700">
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <div><span className="text-gray-500">Reference ID: </span><span className="font-medium">APT-{appointment.id.toString().padStart(5, '0')}</span></div>
+                            <div><span className="text-gray-500">Visit Date: </span><span className="font-medium">{new Date(appointment.appointmentDateTime).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</span></div>
+                            <div><span className="text-gray-500">Duration: </span><span className="font-medium">30 minutes</span></div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    </React.Fragment>
                   ))}
                 </TableBody>
               </Table>

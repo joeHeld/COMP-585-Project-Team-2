@@ -5,6 +5,7 @@ import {
   Home,
   Users,
   ClipboardList,
+  FileText,
   LogOut,
   UserCircle
 } from 'lucide-react';
@@ -24,6 +25,7 @@ export function Layout({ children, userType = 'patient' }: LayoutProps) {
     { path: '/dashboard', icon: Home, label: 'Dashboard' },
     { path: '/book-appointment', icon: Calendar, label: 'Book Appointment' },
     { path: '/my-appointments', icon: ClipboardList, label: 'My Appointments' },
+    { path: '/health-records', icon: FileText, label: 'Health Records' },
   ];
 
   const adminNavItems = [

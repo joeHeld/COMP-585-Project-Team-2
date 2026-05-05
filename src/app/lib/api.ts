@@ -21,6 +21,7 @@ providerId: number;
 appointmentDateTime: string;
 reason: string;
 status: string;
+notes: string | null;
 }
 
 const API_BASE = "http://localhost:5059";
@@ -65,6 +66,8 @@ body: JSON.stringify({ fullName, specialty, workingHours }),
 }),
 getPatientAppointments: (patientId: number) =>
 request<Appointment[]>("/api/appointments/patient/" + patientId),
+getAppointmentById: (id: number) =>
+request<Appointment>("/api/appointments/" + id),
 bookAppointment: (payload: {
 patientId: number;
 providerId: number;
@@ -75,8 +78,18 @@ request<Appointment>("/api/appointments", {
 method: "POST",
 body: JSON.stringify({ ...payload, status: "Booked" }),
 }),
+rescheduleAppointment: (id: number, payload: { appointmentDateTime: string; reason: string }) =>
+request<Appointment>("/api/appointments/reschedule/" + id, {
+method: "PUT",
+body: JSON.stringify(payload),
+}),
 cancelAppointment: (id: number) =>
   request<Appointment>("/api/appointments/cancel/" + id, { method: "POST" }),
+addAppointmentNotes: (id: number, notes: string) =>
+  request<Appointment>("/api/appointments/" + id + "/notes", {
+    method: "PUT",
+    body: JSON.stringify({ notes }),
+  }),
 forgotPassword: (email: string, fullName: string, dateOfBirth: string) =>
   request<{ token: string }>("/api/users/forgot-password", {
     method: "POST",
