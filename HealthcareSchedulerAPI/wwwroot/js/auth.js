@@ -6,7 +6,15 @@ async function registerUser(event) {
 
     const fullName = document.getElementById("fullName").value;
     const email = document.getElementById("email").value;
+    const phoneNumber = document.getElementById("phoneNumber").value;
+    const dateOfBirth = document.getElementById("dateOfBirth").value;
     const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return; 
+    }
 
     const response = await fetch(`${API_BASE}/Users/register`, {
         method: "POST",
@@ -16,7 +24,10 @@ async function registerUser(event) {
         body: JSON.stringify({
             fullName: fullName,
             email: email,
+            phoneNumber: phoneNumber,
+            dateOfBirth: dateOfBirth,
             password: password,
+            confirmPassword: confirmPassword,
             role: "Patient"
         })
     });

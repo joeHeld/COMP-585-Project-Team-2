@@ -28,6 +28,15 @@ namespace HealthcareSchedulerAPI.Controllers
             var exists = await _db.Users.AnyAsync(u => u.Email == dto.Email);
             if (exists) return BadRequest("Email already exists.");
 
+            if (dto.Password != dto.ConfirmPassword) return BadRequest("Passwords do not match.");
+
+            
+            if (string.IsNullOrWhiteSpace(dto.PhoneNumber))
+                return BadRequest("Phone number is required.");
+
+            if (dto.DateOfBirth == default)
+                return BadRequest("Date of birth is required.");
+
             var user = new User
             {
                 FullName = dto.FullName ?? "",
@@ -145,9 +154,10 @@ namespace HealthcareSchedulerAPI.Controllers
         public string? FullName { get; set; }
         public string Email { get; set; } = "";
         public string Password { get; set; } = "";
+        public string ConfirmPassword { get; set; } = "";
         public string? Role { get; set; } // Patient/Admin/etc.
-        public string? Phone { get; set; }
-        public string? DateOfBirth { get; set; }
+        public string PhoneNumber { get; set; } = "";
+        public DateTime DateOfBirth { get; set; }
     }
 
     public class UserLoginDto
