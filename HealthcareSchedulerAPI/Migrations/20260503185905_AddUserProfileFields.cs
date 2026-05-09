@@ -12,13 +12,6 @@ namespace HealthcareSchedulerAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "DateOfBirth",
-                table: "Users",
-                type: "TEXT",
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddColumn<string>(
                 name: "PasswordResetToken",
                 table: "Users",
                 type: "TEXT",
@@ -41,10 +34,6 @@ namespace HealthcareSchedulerAPI.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "DateOfBirth",
-                table: "Users");
-
             migrationBuilder.DropColumn(
                 name: "PasswordResetToken",
                 table: "Users");

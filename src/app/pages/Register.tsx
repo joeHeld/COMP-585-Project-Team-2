@@ -29,14 +29,14 @@ export function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.password.trim() !== formData.confirmPassword.trim()) {
       toast.error('Passwords do not match');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const user = await api.register(formData.fullName, formData.email, formData.password, formData.phone, formData.dateOfBirth);
+      const user = await api.register(formData.fullName, formData.email, formData.password, formData.phone, formData.dateOfBirth, formData.confirmPassword);
       setCurrentUser(user);
       toast.success('Account created successfully');
       navigate('/dashboard');

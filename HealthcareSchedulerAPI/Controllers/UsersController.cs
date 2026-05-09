@@ -43,14 +43,22 @@ namespace HealthcareSchedulerAPI.Controllers
                 Email = dto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 Role = dto.Role ?? "Patient",
-                Phone = dto.Phone ?? "",
-                DateOfBirth = dto.DateOfBirth ?? ""
+                PhoneNumber = dto.PhoneNumber.Trim(),
+                DateOfBirth = dto.DateOfBirth
             };
 
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
 
-            return Ok(new { user.Id, user.FullName, user.Email, user.Role, user.Phone, user.DateOfBirth });
+            return Ok(new
+            {
+                user.Id,
+                user.FullName,
+                user.Email,
+                user.Role,
+                phone = user.PhoneNumber,
+                dateOfBirth = user.DateOfBirth.ToString("yyyy-MM-dd")
+            });
         }
 
         // POST: api/users/login
@@ -63,7 +71,15 @@ namespace HealthcareSchedulerAPI.Controllers
             var ok = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
             if (!ok) return Unauthorized("Invalid email or password.");
 
-            return Ok(new { user.Id, user.FullName, user.Email, user.Role, user.Phone, user.DateOfBirth });
+            return Ok(new
+            {
+                user.Id,
+                user.FullName,
+                user.Email,
+                user.Role,
+                phone = user.PhoneNumber,
+                dateOfBirth = user.DateOfBirth.ToString("yyyy-MM-dd")
+            });
         }
 
         // GET: api/users/5
@@ -73,7 +89,15 @@ namespace HealthcareSchedulerAPI.Controllers
             var user = await _db.Users.FindAsync(id);
             if (user == null) return NotFound("User not found.");
 
-            return Ok(new { user.Id, user.FullName, user.Email, user.Role, user.Phone, user.DateOfBirth });
+            return Ok(new
+            {
+                user.Id,
+                user.FullName,
+                user.Email,
+                user.Role,
+                phone = user.PhoneNumber,
+                dateOfBirth = user.DateOfBirth.ToString("yyyy-MM-dd")
+            });
         }
 
         // PUT: api/users/5
@@ -91,12 +115,29 @@ namespace HealthcareSchedulerAPI.Controllers
 
             user.FullName = dto.FullName.Trim();
             user.Email = dto.Email.Trim();
-            user.Phone = dto.Phone?.Trim() ?? user.Phone;
-            user.DateOfBirth = dto.DateOfBirth?.Trim() ?? user.DateOfBirth;
+
+            if (!string.IsNullOrWhiteSpace(dto.Phone))
+                user.PhoneNumber = dto.Phone.Trim();
+
+            if (!string.IsNullOrWhiteSpace(dto.DateOfBirth))
+            {
+                if (!DateTime.TryParse(dto.DateOfBirth, out var parsedDob))
+                    return BadRequest("Date of birth must be a valid date.");
+
+                user.DateOfBirth = parsedDob;
+            }
 
             await _db.SaveChangesAsync();
 
-            return Ok(new { user.Id, user.FullName, user.Email, user.Role, user.Phone, user.DateOfBirth });
+            return Ok(new
+            {
+                user.Id,
+                user.FullName,
+                user.Email,
+                user.Role,
+                phone = user.PhoneNumber,
+                dateOfBirth = user.DateOfBirth.ToString("yyyy-MM-dd")
+            });
         }
 
         // POST: api/users/forgot-password
@@ -108,7 +149,8 @@ namespace HealthcareSchedulerAPI.Controllers
 
             // Verify identity: full name and date of birth must match
             var nameMatch = string.Equals(user.FullName.Trim(), dto.FullName?.Trim(), StringComparison.OrdinalIgnoreCase);
-            var dobMatch = string.Equals(user.DateOfBirth.Trim(), dto.DateOfBirth?.Trim(), StringComparison.OrdinalIgnoreCase);
+            var dobMatch = DateTime.TryParse(dto.DateOfBirth, out var providedDob) &&
+                           user.DateOfBirth.Date == providedDob.Date;
 
             if (!nameMatch || !dobMatch)
                 return BadRequest("The information provided does not match our records.");

@@ -4,7 +4,8 @@ using var conn = new SqliteConnection($"Data Source={db}");
 conn.Open();
 foreach (var sql in new[] {
     "ALTER TABLE Users ADD COLUMN PasswordResetToken TEXT",
-    "ALTER TABLE Users ADD COLUMN PasswordResetTokenExpiry TEXT"
+    "ALTER TABLE Users ADD COLUMN PasswordResetTokenExpiry TEXT",
+    "ALTER TABLE Appointments ADD COLUMN Notes TEXT"
 }) {
     try {
         using var cmd = conn.CreateCommand();
